@@ -1,11 +1,7 @@
 <template>
-    <div>
-        <h1>测试测试</h1>
-    </div>
-    <svg-icon name="album"></svg-icon>
+    <RouterView />
 </template>
 <script setup lang="ts">
-import SvgIcon from '@/components/SvgIcon/index.vue'
-console.log(import.meta.env)
+import { RouterView } from 'vue-router'
 </script>
 <style lang="scss" scoped></style>
