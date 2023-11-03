@@ -1,7 +1,7 @@
-<template>
-    <h1>redirect</h1>
-</template>
-
 <script setup lang="ts"></script>
 
-<style scoped></style>
+<template>
+  <div>test</div>
+</template>
+
+<style lang="scss" scoped></style>
