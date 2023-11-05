@@ -9,28 +9,27 @@ export const constantRoutes: RouteRecordRaw[] = [
     redirect: "/index",
     children: [
       {
-        path: "/index",
+        path: "index",
         component: () => import("@/views/home/index.vue"),
         name: "Index",
         meta: { title: "首页", icon: "index" }
       },
       {
-        path: "/test",
-        component: Layout,
-        name: "test",
-        meta: { title: "测试", icon: "menu" }
-      },
-      {
         path: "/user",
-        component: Layout,
         name: "user",
         meta: { title: "用户管理", icon: "fuzhi" },
         children: [
           {
-            path: "/add",
-            component: Layout,
-            name: "add",
-            meta: { title: "新增用户", icon: "shanchu", hidden: false }
+            path: "add1",
+            component: () => import("@/views/test/index.vue"),
+            name: "add1",
+            meta: { title: "测试1", icon: "shanchu", hidden: false }
+          },
+          {
+            path: "add2",
+            component: () => import("@/views/test/index.vue"),
+            name: "add2",
+            meta: { title: "测试2", icon: "shanchu", hidden: false }
           }
         ]
       }
@@ -44,17 +43,6 @@ export const constantRoutes: RouteRecordRaw[] = [
       hidden: true
     },
     name: "login"
-  },
-  {
-    path: "/redirect",
-    component: Layout,
-    meta: { hidden: true },
-    children: [
-      {
-        path: "/redirect/:path(.*)",
-        component: () => import("@/views/redirect/index.vue")
-      }
-    ]
   },
   {
     path: "/:pathMatch(.*)*",

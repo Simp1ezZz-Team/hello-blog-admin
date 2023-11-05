@@ -1,7 +1,7 @@
 <template>
   <template v-if="item.meta || item.children">
     <template v-if="item.meta?.title && !item.meta?.hidden">
-      <el-sub-menu v-if="item.children" :index="item.path">
+      <el-sub-menu v-if="item.children" :index="resolvePath(item.path)">
         <template #title>
           <el-icon size="18">
             <svg-icon :name="item.meta.icon ? item.meta.icon : 'hello'" />
@@ -11,24 +11,21 @@
         <SidebarItem
           v-for="child in item.children"
           :item="child"
-          :base-path="resolvePath(child.path)"
+          :base-path="resolvePath(item.path)"
           :key="child.path"
         />
       </el-sub-menu>
-      <el-menu-item v-else :index="item.path">
-        <el-icon size="18">
-          <svg-icon :name="item.meta.icon ? item.meta.icon : 'hello'" />
-        </el-icon>
-        <span>{{ item.meta.title }}</span>
-      </el-menu-item>
+      <Link v-else :to="resolvePath(item.path)">
+        <el-menu-item :index="resolvePath(item.path)">
+          <el-icon size="18">
+            <svg-icon :name="item.meta.icon ? item.meta.icon : 'hello'" />
+          </el-icon>
+          <span>{{ item.meta.title }}</span>
+        </el-menu-item>
+      </Link>
     </template>
     <template v-else-if="item.children">
-      <SidebarItem
-        v-for="child in item.children"
-        :item="child"
-        :base-path="resolvePath(child.path)"
-        :key="child.path"
-      />
+      <SidebarItem v-for="child in item.children" :item="child" :base-path="resolvePath(item.path)" :key="child.path" />
     </template>
   </template>
 </template>
@@ -37,6 +34,7 @@
 import { type RouteRecordRaw } from "vue-router";
 import type { PropType } from "vue";
 import SvgIcon from "@/components/SvgIcon/index.vue";
+import Link from "@/layout/SideBar/Link.vue";
 
 const props = defineProps({
   item: {

@@ -3,7 +3,9 @@
     <el-header class="header"><logo /></el-header>
     <el-container>
       <SideBar class="sidebar-container" />
-      <el-main class="main">Main</el-main>
+      <el-main class="main">
+        <AppMain />
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -11,6 +13,7 @@
 <script setup lang="ts">
 import SideBar from "./SideBar/index.vue";
 import Logo from "@/layout/SideBar/Logo.vue";
+import AppMain from "@/layout/AppMain/index.vue";
 </script>
 
 <style scoped lang="scss">
