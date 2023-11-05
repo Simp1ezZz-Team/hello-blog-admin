@@ -1,22 +1,11 @@
 <template>
   <div class="login-container">
-    <el-form
-      class="login-form"
-      :model="loginForm"
-      ref="ruleFormRef"
-      :rules="rules"
-    >
+    <el-form class="login-form" :model="loginForm" ref="ruleFormRef" :rules="rules">
       <div class="form-main">
         <h1 class="title">Hello Blog</h1>
         <h2 class="sub-title">博客后台管理系统</h2>
         <el-form-item prop="username">
-          <el-input
-            v-model="loginForm.username"
-            type="text"
-            size="large"
-            placeholder="账号"
-            :prefix-icon="User"
-          />
+          <el-input v-model="loginForm.username" type="text" size="large" placeholder="账号" :prefix-icon="User" />
         </el-form-item>
         <el-form-item prop="password">
           <el-input
@@ -30,12 +19,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button
-            :loading="loading"
-            type="primary"
-            style="width: 100%"
-            @click.prevent="handleLogin(ruleFormRef)"
-          >
+          <el-button :loading="loading" type="primary" style="width: 100%" @click.prevent="handleLogin(ruleFormRef)">
             <span v-if="!loading">登录</span>
             <span v-else>登录中...</span>
           </el-button>
@@ -43,9 +27,7 @@
       </div>
     </el-form>
     <div class="login-footer">
-      <span
-        >Copyright © 2023 - {{ new Date().getFullYear() }} By SimpleZzz</span
-      >
+      <span>Copyright © 2023 - {{ new Date().getFullYear() }} By SimpleZzz</span>
     </div>
   </div>
 </template>

@@ -2,7 +2,7 @@ import Layout from "@/layout/index.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteRecordRaw, Router } from "vue-router";
 
-const constantRoutes: RouteRecordRaw[] = [
+export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "",
     component: Layout,
@@ -12,17 +12,38 @@ const constantRoutes: RouteRecordRaw[] = [
         path: "/index",
         component: () => import("@/views/home/index.vue"),
         name: "Index",
-        meta: { title: "首页", icon: "dashboard", affix: true }
+        meta: { title: "首页", icon: "index" }
+      },
+      {
+        path: "/test",
+        component: Layout,
+        name: "test",
+        meta: { title: "测试", icon: "menu" }
+      },
+      {
+        path: "/user",
+        component: Layout,
+        name: "user",
+        meta: { title: "用户管理", icon: "fuzhi" },
+        children: [
+          {
+            path: "/add",
+            component: Layout,
+            name: "add",
+            meta: { title: "新增用户", icon: "shanchu", hidden: false }
+          }
+        ]
       }
     ]
   },
+
   {
     path: "/login",
     component: () => import("@/views/login/index.vue"),
     meta: {
       hidden: true
     },
-    name: "登录"
+    name: "login"
   },
   {
     path: "/redirect",
@@ -38,9 +59,7 @@ const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/:pathMatch(.*)*",
     component: () => import("@/views/error/404.vue"),
-    meta: {
-      hidden: true
-    }
+    meta: { hidden: true }
   }
 ];
 

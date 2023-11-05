@@ -1,4 +1,5 @@
 import "@/assets/styles/index.scss";
+import "@/assets/fonts/font.scss";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import "virtual:svg-icons-register";

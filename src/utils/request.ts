@@ -1,9 +1,5 @@
 import axios from "axios";
-import type {
-  InternalAxiosRequestConfig,
-  AxiosResponse,
-  AxiosError
-} from "axios";
+import type { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 import { ElNotification } from "element-plus";
 import { getToken, token_header, token_prefix } from "@/utils/token";
 import useStore from "@/stores";
