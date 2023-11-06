@@ -1,6 +1,6 @@
 import Layout from "@/layout/index.vue";
+import type { Router, RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
-import type { RouteRecordRaw, Router } from "vue-router";
 
 export const constantRoutes: RouteRecordRaw[] = [
   {
@@ -12,24 +12,24 @@ export const constantRoutes: RouteRecordRaw[] = [
         path: "index",
         component: () => import("@/views/home/index.vue"),
         name: "Index",
-        meta: { title: "首页", icon: "index" }
+        meta: { title: "首页", icon: "menu" }
       },
       {
         path: "/user",
         name: "user",
-        meta: { title: "用户管理", icon: "fuzhi" },
+        meta: { title: "用户管理", icon: "menu" },
         children: [
           {
             path: "add1",
             component: () => import("@/views/test/index.vue"),
             name: "add1",
-            meta: { title: "测试1", icon: "shanchu", hidden: false }
+            meta: { title: "测试1", icon: "menu", hidden: false }
           },
           {
             path: "add2",
             component: () => import("@/views/test/index.vue"),
             name: "add2",
-            meta: { title: "测试2", icon: "shanchu", hidden: false }
+            meta: { title: "测试2", icon: "menu", hidden: false }
           }
         ]
       }
