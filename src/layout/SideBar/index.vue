@@ -1,11 +1,12 @@
 <template>
-  <el-aside class="sidebar-container">
+  <el-aside class="sidebar-container" :class="sidebarClass">
+    <Logo />
     <el-scrollbar>
       <el-menu
         class="menu-container"
         :default-active="activeMenu"
         :unique-opened="true"
-        :collapse="isCollapse"
+        :collapse="app.isCollapse"
         :collapse-transition="false"
         :background-color="variables.menuBg"
         :text-color="variables.menuText"
@@ -14,7 +15,6 @@
       >
         <sidebar-item v-for="route in constantRoutes" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
-      <svg-icon class="collapse-button" name="collapse" size="24px" />
     </el-scrollbar>
   </el-aside>
 </template>
@@ -26,19 +26,21 @@ import { computed } from "vue";
 import useStore from "@/stores";
 import { constantRoutes } from "@/router";
 import SidebarItem from "@/layout/SideBar/SidebarItem.vue";
-import SvgIcon from "@/components/SvgIcon/index.vue";
+import Logo from "@/layout/SideBar/logo.vue";
 
 const { app } = useStore();
 const route = useRoute();
 const activeMenu = computed(() => route.path);
-const isCollapse = computed(() => app.isCollapse);
+const sidebarClass = computed(() => ({
+  hideSidebar: app.isCollapse,
+  showSidebar: !app.isCollapse
+}));
 </script>
 
 <style scoped lang="scss">
 @import "@/assets/styles/variables.module.scss";
 
 .sidebar-container {
-  width: $sideBarWidth;
   overflow: hidden;
   background-color: $menuBg;
   .collapse-button {
@@ -50,6 +52,14 @@ const isCollapse = computed(() => app.isCollapse);
     padding: 5px;
     background-color: #f7f8fa;
   }
+}
+.showSidebar {
+  width: $sideBarWidth;
+  transition: width 0.28s;
+}
+.hideSidebar {
+  width: $hideSideBarWidth;
+  transition: width 0.28s;
 }
 
 .menu-container {

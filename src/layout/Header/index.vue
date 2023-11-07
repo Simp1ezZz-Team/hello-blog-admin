@@ -1,9 +1,18 @@
 <template>
   <div class="header-container">
-    <RouterLink key="expand" class="title-container" to="/">
-      <svgIcon name="hello" size="32px" />
-      <h1 class="title">博客后台管理系统</h1>
-    </RouterLink>
+    <div class="breadcrumb-container">
+      <svg-icon
+        @click="changeCollapse"
+        class="collapse-button"
+        :name="app.isCollapse ? 'expand' : 'collapse'"
+        size="24px"
+      />
+      <el-breadcrumb class="breadcrumb" separator="/">
+        <el-breadcrumb-item v-for="route in currentRoute.matched" :key="route.path" v-show="route.meta.title">
+          <span>{{ route.meta.title }}</span>
+        </el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
     <div class="setting-container">
       <el-button class="button" circle><svg-icon name="search" size="18px" /></el-button>
       <el-button class="button" circle><svg-icon name="language" size="18px" /></el-button>
@@ -25,6 +34,14 @@
 
 <script setup lang="ts">
 import SvgIcon from "@/components/SvgIcon/index.vue";
+import useStore from "@/stores";
+import { useRoute } from "vue-router";
+
+const currentRoute = useRoute();
+const { app } = useStore();
+const changeCollapse = () => {
+  app.changeCollapse(!app.isCollapse);
+};
 </script>
 
 <style scoped lang="scss">
@@ -36,14 +53,14 @@ import SvgIcon from "@/components/SvgIcon/index.vue";
   width: 100%;
   height: 100%;
 
-  .title-container {
+  .breadcrumb-container {
     display: flex;
     align-items: center;
-
-    .title {
-      color: $title;
-      font-size: 20px;
-      margin: 0 0 0 6px;
+    .collapse-button {
+      cursor: pointer;
+    }
+    .breadcrumb {
+      margin-left: 20px;
     }
   }
 

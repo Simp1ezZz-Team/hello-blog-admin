@@ -1,10 +1,10 @@
 <template>
   <el-container class="container">
-    <el-header class="header">
-      <Header />
-    </el-header>
+    <SideBar />
     <el-container>
-      <SideBar />
+      <el-header class="header">
+        <Header />
+      </el-header>
       <el-main class="main">
         <AppMain />
       </el-main>
