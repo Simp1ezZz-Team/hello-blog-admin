@@ -1,9 +1,13 @@
 <template>
   <el-container class="container">
+    <!--侧边栏-->
     <SideBar />
     <el-container>
       <el-header class="header">
+        <!--头部-->
         <Header />
+        <!---->
+        <TagView />
       </el-header>
       <el-main class="main">
         <AppMain />
@@ -16,6 +20,7 @@
 import SideBar from "./SideBar/index.vue";
 import Header from "@/layout/Header/index.vue";
 import AppMain from "@/layout/AppMain/index.vue";
+import TagView from "@/components/TabView/index.vue";
 </script>
 
 <style scoped lang="scss">
@@ -27,8 +32,9 @@ import AppMain from "@/layout/AppMain/index.vue";
 
   .header {
     width: 100%;
-    height: $headerHeight;
+    height: calc($headerHeight + $tabHeight);
     background-color: $headerBg;
+    padding: 0;
   }
 
   .main {

@@ -42,7 +42,7 @@ request.interceptors.response.use(
           message: "登录已过期，请重新登录",
           type: "error"
         });
-        user = useStore().user;
+        user = useStore().userStore;
         user.LogOut().then(() => {
           location.href = "/login"; //跳转到登录页面
         });

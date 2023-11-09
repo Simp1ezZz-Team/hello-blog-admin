@@ -39,7 +39,7 @@ import useStore from "@/stores";
 import router from "@/router";
 import { ElNotification } from "element-plus";
 
-const { user } = useStore();
+const { userStore } = useStore();
 const loading = ref(false);
 const loginForm = reactive({ username: "", password: "" });
 const ruleFormRef = ref<FormInstance>();
@@ -55,7 +55,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
   await formEl.validate(valid => {
     if (valid) {
       loading.value = true;
-      user
+      userStore
         .Login(loginForm)
         .then(() => {
           ElNotification({

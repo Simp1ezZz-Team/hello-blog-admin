@@ -12,42 +12,60 @@ export const constantRoutes: RouteRecordRaw[] = [
         path: "index",
         component: () => import("@/views/home/index.vue"),
         name: "Index",
-        meta: { title: "首页", icon: "menu" }
-      },
-      {
-        path: "/user",
-        name: "user",
-        meta: { title: "用户管理", icon: "menu" },
-        children: [
-          {
-            path: "add1",
-            component: () => import("@/views/test/index.vue"),
-            name: "add1",
-            meta: { title: "测试1", icon: "menu", hidden: false }
-          },
-          {
-            path: "add2",
-            component: () => import("@/views/test/index.vue"),
-            name: "add2",
-            meta: { title: "测试2", icon: "menu", hidden: false }
-          }
-        ]
+        meta: { title: "首页", icon: "dashboard", affix: true }
       }
     ]
   },
-
   {
     path: "/login",
     component: () => import("@/views/login/index.vue"),
+    name: "login",
     meta: {
       hidden: true
-    },
-    name: "login"
+    }
   },
   {
     path: "/:pathMatch(.*)*",
     component: () => import("@/views/error/404.vue"),
     meta: { hidden: true }
+  },
+  {
+    path: "/system",
+    component: Layout,
+    name: "System",
+    meta: {
+      title: "系统管理",
+      icon: "system"
+    },
+    children: [
+      {
+        path: "user",
+        component: () => import("@/views/system/user/index.vue"),
+        name: "user",
+        meta: {
+          title: "用户管理",
+          icon: "user"
+        }
+      },
+      {
+        path: "role",
+        component: () => import("@/views/system/role/index.vue"),
+        name: "role",
+        meta: {
+          title: "角色管理",
+          icon: "role"
+        }
+      },
+      {
+        path: "menu",
+        component: () => import("@/views/system/menu/index.vue"),
+        name: "menu",
+        meta: {
+          title: "菜单管理",
+          icon: "menu"
+        }
+      }
+    ]
   }
 ];
 

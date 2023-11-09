@@ -6,14 +6,14 @@
         class="menu-container"
         :default-active="activeMenu"
         :unique-opened="true"
-        :collapse="app.isCollapse"
+        :collapse="appStore.isCollapse"
         :collapse-transition="false"
         :background-color="variables.menuBg"
         :text-color="variables.menuText"
         :active-text-color="variables.menuActiveText"
         :router="true"
       >
-        <sidebar-item v-for="route in constantRoutes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item v-for="route in constantRoutes" :key="route.path" :item="route" base-path="" />
       </el-menu>
     </el-scrollbar>
   </el-aside>
@@ -28,12 +28,12 @@ import { constantRoutes } from "@/router";
 import SidebarItem from "@/layout/SideBar/SidebarItem.vue";
 import Logo from "@/layout/SideBar/logo.vue";
 
-const { app } = useStore();
+const { appStore } = useStore();
 const route = useRoute();
 const activeMenu = computed(() => route.path);
 const sidebarClass = computed(() => ({
-  hideSidebar: app.isCollapse,
-  showSidebar: !app.isCollapse
+  hideSidebar: appStore.isCollapse,
+  showSidebar: !appStore.isCollapse
 }));
 </script>
 

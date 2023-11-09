@@ -1,4 +1,4 @@
-import type { RouteRecordRaw } from "vue-router";
+import type { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 
 export interface AppState {
   /**
@@ -9,4 +9,12 @@ export interface AppState {
 
 export interface PermissionState {
   routes: RouteRecordRaw[];
+}
+
+export interface TabView extends Partial<RouteLocationNormalized> {
+  title?: string;
+}
+
+export interface TabViewState {
+  visitedViews: TabView[];
 }

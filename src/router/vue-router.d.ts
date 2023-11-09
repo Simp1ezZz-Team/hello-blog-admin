@@ -10,5 +10,8 @@ declare module "vue-router" {
 
     // 设置该路由的图标
     icon?: string;
+
+    // 路由是否在tab栏固定
+    affix?: boolean;
   }
 }

@@ -2,7 +2,7 @@
   <div class="sidebar-logo-container">
     <RouterLink class="sidebar-logo-link" to="/">
       <svgIcon name="hello" size="50px" />
-      <h1 class="sidebar-title" v-show="!app.isCollapse">HELLO BLOG</h1>
+      <h1 class="sidebar-title" v-show="!appStore.isCollapse">HELLO BLOG</h1>
     </RouterLink>
   </div>
 </template>
@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import useStore from "@/stores";
 
-const { app } = useStore();
+const { appStore } = useStore();
 </script>
 
 <style scoped lang="scss">

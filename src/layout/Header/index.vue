@@ -4,7 +4,7 @@
       <svg-icon
         @click="changeCollapse"
         class="collapse-button"
-        :name="app.isCollapse ? 'expand' : 'collapse'"
+        :name="appStore.isCollapse ? 'expand' : 'collapse'"
         size="24px"
       />
       <el-breadcrumb class="breadcrumb" separator="/">
@@ -38,9 +38,9 @@ import useStore from "@/stores";
 import { useRoute } from "vue-router";
 
 const currentRoute = useRoute();
-const { app } = useStore();
+const { appStore } = useStore();
 const changeCollapse = () => {
-  app.changeCollapse(!app.isCollapse);
+  appStore.changeCollapse(!appStore.isCollapse);
 };
 </script>
 
@@ -51,7 +51,8 @@ const changeCollapse = () => {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  height: 100%;
+  height: $headerHeight;
+  padding: 0 20px;
 
   .breadcrumb-container {
     display: flex;

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import type { AppState } from "@/stores/interface";
 
-const useAppStore = defineStore("useAppStore", {
+const useAppStore = defineStore("appStore", {
   state: (): AppState => ({
     isCollapse: false
   }),
@@ -9,6 +9,9 @@ const useAppStore = defineStore("useAppStore", {
     changeCollapse(isCollapse: boolean) {
       this.isCollapse = isCollapse;
     }
+  },
+  persist: {
+    storage: localStorage
   }
 });
 

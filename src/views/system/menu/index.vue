@@ -1,5 +1,5 @@
 <template>
-  <h1>测试啊啊啊啊啊啊啊啊啊啊啊啊</h1>
+  <h1>Menu</h1>
 </template>
 
 <script setup lang="ts"></script>

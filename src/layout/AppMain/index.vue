@@ -1,11 +1,9 @@
 <template>
   <section class="app-main">
     <router-view v-slot="{ Component, route }">
-      <transition name="fade-transform" mode="out-in">
-        <keep-alive>
-          <component :is="Component" :key="route.fullPath" />
-        </keep-alive>
-      </transition>
+      <keep-alive>
+        <component :is="Component" :key="route.fullPath" />
+      </keep-alive>
     </router-view>
   </section>
 </template>

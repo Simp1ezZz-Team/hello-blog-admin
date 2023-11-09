@@ -4,7 +4,7 @@ import type { PermissionState } from "@/stores/interface";
 import type { RouteRecordRaw } from "vue-router";
 
 const usePermissionStore = defineStore({
-  id: "permission",
+  id: "permissionStore",
   state: (): PermissionState => ({
     routes: []
   }),
