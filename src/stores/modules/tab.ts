@@ -127,6 +127,9 @@ const useTabStore = defineStore("tabStore", {
   getters: {
     lastView(): TabView | undefined {
       return this.visitedViews.at(-1);
+    },
+    hasView() {
+      return (tabPath: string) => this.visitedViews.some(tab => tab.path === tabPath);
     }
   },
   persist: {
