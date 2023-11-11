@@ -5,6 +5,11 @@ export interface AppState {
    * 侧边栏是否展开
    */
   isCollapse: boolean;
+
+  /**
+   * 刷新,值变动时刷新页面
+   */
+  refresh: boolean;
 }
 
 export interface PermissionState {
