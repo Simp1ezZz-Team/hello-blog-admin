@@ -12,6 +12,29 @@ export interface AppState {
   refresh: boolean;
 }
 
+export interface UserState {
+  /**
+   * 用户id
+   */
+  userId: number | null;
+  /**
+   * 昵称
+   */
+  nickName: string;
+  /**
+   * 头像
+   */
+  avatar: string;
+  /**
+   * 角色列表
+   */
+  roleList: string[];
+  /**
+   * 权限列表
+   */
+  permissionList: string[];
+}
+
 export interface PermissionState {
   routes: RouteRecordRaw[];
 }

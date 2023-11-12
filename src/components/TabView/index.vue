@@ -1,5 +1,5 @@
 <template>
-  <el-scrollbar class="tab_container">
+  <el-scrollbar class="tab_container" height="41px">
     <el-tabs
       v-model="activeTabName"
       type="card"
@@ -292,12 +292,9 @@ onMounted(() => {
 
 .tab_container {
   height: $tabHeight;
-
   .tabs {
     height: $tabHeight;
-    --el-tabs-header-height: 34px;
     margin: 0;
-
     .tab-pane {
       margin: 0;
     }

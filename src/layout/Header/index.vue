@@ -35,14 +35,14 @@
       <el-button class="button" circle>
         <svg-icon name="setting" size="18px" />
       </el-button>
-      <el-dropdown trigger="click" class="avatar-container">
+      <el-dropdown trigger="click" class="avatar-container" @command="handleCommand">
         <el-button class="button" circle>
           <svg-icon name="avatar" size="32px" />
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>个人主页</el-dropdown-item>
-            <el-dropdown-item>退出登录</el-dropdown-item>
+            <el-dropdown-item command="changePassword">修改密码</el-dropdown-item>
+            <el-dropdown-item command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -56,11 +56,12 @@ import SvgIcon from "@/components/SvgIcon/index.vue";
 import useStore from "@/stores";
 import { useRoute } from "vue-router";
 import { useFullscreen } from "@vueuse/core";
+import { ElMessageBox } from "element-plus";
 
 const { isFullscreen, enter, exit } = useFullscreen();
 
 const currentRoute = useRoute();
-const { appStore } = useStore();
+const { appStore, userStore } = useStore();
 const fullScreenIconName = ref("fullScreen");
 /**
  * 切换侧边栏收缩打开
@@ -88,6 +89,26 @@ const fullScreen = () => {
     fullScreenIconName.value = "exitFullScreen";
   }
 };
+
+const handleCommand = (key: string) => {
+  switch (key) {
+    case "changePassword":
+      // logout();
+      break;
+    case "logout":
+      logout();
+      break;
+  }
+};
+const logout = () => {
+  ElMessageBox.confirm("确定注销并退出系统吗？")
+    .then(() => {
+      userStore.LogOut().then(() => {
+        location.href = "/login";
+      });
+    })
+    .catch(() => {});
+};
 </script>
 
 <style scoped lang="scss">
@@ -99,6 +120,9 @@ const fullScreen = () => {
   width: 100%;
   height: $headerHeight;
   padding: 0 20px;
+  border-bottom: 1px solid #d8dce5;
+  border-radius: 1px;
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.04);
 
   .breadcrumb-container {
     display: flex;
