@@ -32,12 +32,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import { User, Lock } from "@element-plus/icons-vue";
+import { Lock, User } from "@element-plus/icons-vue";
 import { reactive, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
+import { ElNotification } from "element-plus";
 import useStore from "@/stores";
 import router from "@/router";
-import { ElNotification } from "element-plus";
 
 const { userStore } = useStore();
 const loading = ref(false);

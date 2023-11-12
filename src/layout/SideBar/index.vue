@@ -13,7 +13,7 @@
         :active-text-color="variables.menuActiveText"
         :router="true"
       >
-        <sidebar-item v-for="route in constantRoutes" :key="route.path" :item="route" base-path="" />
+        <sidebar-item v-for="route in routes" :key="route.path" :item="route" base-path="" />
       </el-menu>
     </el-scrollbar>
   </el-aside>
@@ -24,17 +24,17 @@ import variables from "@/assets/styles/variables.module.scss";
 import { useRoute } from "vue-router";
 import { computed } from "vue";
 import useStore from "@/stores";
-import { constantRoutes } from "@/router";
 import SidebarItem from "@/layout/SideBar/SidebarItem.vue";
 import Logo from "@/layout/SideBar/logo.vue";
 
-const { appStore } = useStore();
+const { appStore, permissionStore } = useStore();
 const route = useRoute();
 const activeMenu = computed(() => route.path);
 const sidebarClass = computed(() => ({
   hideSidebar: appStore.isCollapse,
   showSidebar: !appStore.isCollapse
 }));
+const routes = computed(() => permissionStore.routes);
 </script>
 
 <style scoped lang="scss">
@@ -43,6 +43,7 @@ const sidebarClass = computed(() => ({
 .sidebar-container {
   overflow: hidden;
   background-color: $menuBg;
+
   .collapse-button {
     position: absolute;
     right: 0;
@@ -53,10 +54,12 @@ const sidebarClass = computed(() => ({
     background-color: #f7f8fa;
   }
 }
+
 .showSidebar {
   width: $sideBarWidth;
   transition: width 0.28s;
 }
+
 .hideSidebar {
   width: $hideSideBarWidth;
   transition: width 0.28s;

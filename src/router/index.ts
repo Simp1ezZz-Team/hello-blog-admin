@@ -4,6 +4,17 @@ import { createRouter, createWebHistory } from "vue-router";
 
 export const constantRoutes: RouteRecordRaw[] = [
   {
+    path: "/redirect",
+    component: Layout,
+    meta: { hidden: true },
+    children: [
+      {
+        path: "/redirect/:path(.*)",
+        component: () => import("@/views/redirect/index.vue")
+      }
+    ]
+  },
+  {
     path: "",
     component: Layout,
     redirect: "/index",
@@ -28,44 +39,6 @@ export const constantRoutes: RouteRecordRaw[] = [
     path: "/:pathMatch(.*)*",
     component: () => import("@/views/error/404.vue"),
     meta: { hidden: true }
-  },
-  {
-    path: "/system",
-    component: Layout,
-    name: "System",
-    meta: {
-      title: "系统管理",
-      icon: "system"
-    },
-    children: [
-      {
-        path: "user",
-        component: () => import("@/views/system/user/index.vue"),
-        name: "user",
-        meta: {
-          title: "用户管理",
-          icon: "user"
-        }
-      },
-      {
-        path: "role",
-        component: () => import("@/views/system/role/index.vue"),
-        name: "role",
-        meta: {
-          title: "角色管理",
-          icon: "role"
-        }
-      },
-      {
-        path: "menu",
-        component: () => import("@/views/system/menu/index.vue"),
-        name: "menu",
-        meta: {
-          title: "菜单管理",
-          icon: "menu"
-        }
-      }
-    ]
   }
 ];
 

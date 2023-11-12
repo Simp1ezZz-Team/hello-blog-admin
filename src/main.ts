@@ -9,6 +9,8 @@ import "element-plus/theme-chalk/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
 import App from "./App.vue";
 import router from "./router";
+import "@/permission";
+import "nprogress/nprogress.css";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
 const pinia = createPinia();
