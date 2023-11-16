@@ -20,7 +20,7 @@ export interface UserState {
   /**
    * 昵称
    */
-  nickName: string;
+  nickname: string;
   /**
    * 头像
    */

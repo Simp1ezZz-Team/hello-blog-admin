@@ -8,7 +8,10 @@ import useStore from "@/stores";
 const request = axios.create({
   baseURL: "/api",
   timeout: 10000,
-  headers: { "Content-Type": "application/json;charset=UTF-8" }
+  // 请求头
+  headers: {
+    "Content-Type": "application/json;charset=UTF-8"
+  }
 });
 let user = null;
 //请求拦截器

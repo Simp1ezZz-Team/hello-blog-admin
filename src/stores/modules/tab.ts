@@ -131,9 +131,6 @@ const useTabStore = defineStore("tabStore", {
     hasView() {
       return (tabPath: string) => this.visitedViews.some(tab => tab.path === tabPath);
     }
-  },
-  persist: {
-    storage: localStorage
   }
 });
 

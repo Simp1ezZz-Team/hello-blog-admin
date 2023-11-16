@@ -8,7 +8,7 @@ import type { UserState } from "@/stores/interface";
 const useUserStore = defineStore("userStore", {
   state: (): UserState => ({
     userId: null,
-    nickName: "",
+    nickname: "",
     avatar: "",
     roleList: [],
     permissionList: []
@@ -44,7 +44,7 @@ const useUserStore = defineStore("userStore", {
         logout()
           .then(() => {
             this.userId = null;
-            this.nickName = "";
+            this.nickname = "";
             this.avatar = "";
             this.roleList = [];
             this.permissionList = [];
@@ -66,7 +66,7 @@ const useUserStore = defineStore("userStore", {
           .then(({ data }) => {
             if (data.flag) {
               this.userId = data.data.userId;
-              this.nickName = data.data.nickName;
+              this.nickname = data.data.nickname;
               this.avatar = data.data.avatar;
               this.roleList = data.data.roleList;
               this.permissionList = data.data.permissionList;
