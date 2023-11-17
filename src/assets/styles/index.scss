@@ -23,6 +23,11 @@ html {
   height: 100%;
 }
 
+.pagination-container {
+  justify-content: flex-end;
+  margin: 1.25rem 0;
+}
+
 *,
 *:before,
 *:after {

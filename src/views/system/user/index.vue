@@ -14,14 +14,14 @@
       </el-form-item>
     </el-form>
     <el-table :data="userList" border>
-      <el-table-column prop="userId" label="用户id" align="center" min-width="60" />
-      <el-table-column prop="avatar" label="用户头像" align="center" min-width="60">
+      <el-table-column prop="userId" label="用户id" align="center" />
+      <el-table-column prop="avatar" label="用户头像" align="center">
         <template #default="scope">
           <el-image :src="scope.row.avatar" style="width: 60px; height: 60px" />
         </template>
       </el-table-column>
-      <el-table-column prop="nickname" label="用户昵称" align="center" min-width="140" />
-      <el-table-column prop="loginType" label="登录方式" align="center" min-width="80">
+      <el-table-column prop="nickname" label="用户昵称" align="center" />
+      <el-table-column prop="loginType" label="登录方式" align="center">
         <template #default="scope">
           <el-tag type="success" v-if="scope.row.loginType == 1">邮箱</el-tag>
           <el-tag v-if="scope.row.loginType == 2">QQ</el-tag>
@@ -29,14 +29,14 @@
           <el-tag type="info" v-if="scope.row.loginType == 4">Github</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="roleList" label="用户角色" align="center" min-width="80">
+      <el-table-column prop="roleList" label="用户角色" align="center">
         <template #default="scope">
           <el-tag v-for="role in scope.row.roleList" :key="role.id" style="margin-right: 4px; margin-top: 4px">
             {{ role.roleName }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" align="center" min-width="80">
+      <el-table-column prop="status" label="状态" align="center">
         <template #default="scope">
           <el-switch
             v-model="scope.row.disableFlag"
@@ -49,10 +49,10 @@
         </template>
       </el-table-column>
       <!-- 登录ip -->
-      <el-table-column prop="ipAddress" label="登录ip" align="center" min-width="80" />
+      <el-table-column prop="ipAddress" label="登录ip" align="center" />
       <!-- 登录地址 -->
-      <el-table-column prop="ipSource" label="登录地址" align="center" min-width="100" />
-      <el-table-column prop="createTime" label="创建时间" align="center" min-width="130">
+      <el-table-column prop="ipSource" label="登录地址" align="center" />
+      <el-table-column prop="createTime" label="创建时间" align="center">
         <template #default="scope">
           <div class="create-time">
             <el-icon>
@@ -63,7 +63,7 @@
         </template>
       </el-table-column>
       <!-- 登录时间 -->
-      <el-table-column prop="loginTime" label="登录时间" align="center" min-width="130">
+      <el-table-column prop="loginTime" label="登录时间" align="center">
         <template #default="scope">
           <div class="create-time">
             <el-icon>
@@ -74,12 +74,18 @@
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="操作" align="center" min-width="100">
+      <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button type="primary" icon="Edit" link @click="openModel(scope.row)"> 编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <pagination
+      :total="count"
+      v-model:page-num="queryParams.pageNum"
+      v-model:page-size="queryParams.pageSize"
+      @pagination="getList"
+    />
   </div>
 </template>
 
@@ -88,6 +94,7 @@ import { onMounted, reactive, toRefs } from "vue";
 import type { User, UserQuery } from "@/api/user/types";
 import { Clock } from "@element-plus/icons-vue";
 import { getUserList } from "@/api/user";
+import Pagination from "@/components/Pagination/index.vue";
 
 const data = reactive({
   count: 0,
