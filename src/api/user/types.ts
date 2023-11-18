@@ -44,6 +44,9 @@ export interface UserQuery extends PageQuery {
   loginType?: number;
 }
 
+/**
+ * 用户状态
+ */
 export interface UserStatus {
   /**
    * 用户id

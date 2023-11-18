@@ -18,15 +18,15 @@
       </el-form-item>
     </el-form>
     <el-table :data="userList" border>
-      <el-table-column prop="userId" label="用户id" align="center" min-width="30px" />
+      <el-table-column prop="userId" label="用户id" align="center" min-width="80px" />
       <el-table-column prop="avatar" label="用户头像" align="center" min-width="80px">
         <template #default="scope">
           <el-image :src="scope.row.avatar" style="width: 60px; height: 60px" />
         </template>
       </el-table-column>
-      <el-table-column prop="username" label="用户名" align="center" min-width="80px" />
-      <el-table-column prop="nickname" label="用户昵称" align="center" min-width="100px" />
-      <el-table-column prop="loginType" label="登录方式" align="center" min-width="40px">
+      <el-table-column prop="username" label="用户名" align="center" min-width="110px" />
+      <el-table-column prop="nickname" label="用户昵称" align="center" min-width="150px" />
+      <el-table-column prop="loginType" label="登录方式" align="center" min-width="100px">
         <template #default="scope">
           <el-tag type="success" v-if="scope.row.loginType == 0">账号</el-tag>
           <el-tag v-if="scope.row.loginType == 1">邮箱</el-tag>
@@ -35,14 +35,14 @@
           <el-tag type="warning" v-if="scope.row.loginType == 4">Github</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="roleList" label="用户角色" align="center" min-width="40px">
+      <el-table-column prop="roleList" label="用户角色" align="center" min-width="100px">
         <template #default="scope">
           <el-tag v-for="role in scope.row.roleList" :key="role.id" style="margin-right: 4px; margin-top: 4px">
             {{ role.roleName }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" align="center" min-width="40px">
+      <el-table-column prop="status" label="状态" align="center" min-width="60px">
         <template #default="scope">
           <el-switch
             v-model="scope.row.disableFlag"
@@ -55,21 +55,11 @@
         </template>
       </el-table-column>
       <!-- 登录ip -->
-      <el-table-column prop="ipAddress" label="登录ip" align="center" min-width="50px" />
+      <el-table-column prop="ipAddress" label="登录ip" align="center" min-width="100px" />
       <!-- 登录地址 -->
-      <el-table-column prop="ipSource" label="登录地址" align="center" min-width="50px" />
-      <el-table-column prop="createTime" label="创建时间" align="center" min-width="85px">
-        <template #default="scope">
-          <div class="create-time" v-if="scope.row.createTime">
-            <el-icon>
-              <Clock />
-            </el-icon>
-            <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column prop="ipSource" label="登录地址" align="center" min-width="100px" />
       <!-- 登录时间 -->
-      <el-table-column prop="loginTime" label="登录时间" align="center" min-width="85px">
+      <el-table-column prop="loginTime" label="登录时间" align="center" min-width="150px">
         <template #default="scope">
           <div class="create-time" v-if="scope.row.loginTime">
             <el-icon>
@@ -79,8 +69,19 @@
           </div>
         </template>
       </el-table-column>
+      <!--创建时间-->
+      <el-table-column prop="createTime" label="创建时间" align="center" min-width="150px">
+        <template #default="scope">
+          <div class="create-time" v-if="scope.row.createTime">
+            <el-icon>
+              <Clock />
+            </el-icon>
+            <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
+          </div>
+        </template>
+      </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="操作" align="center" min-width="60px">
+      <el-table-column label="操作" align="center" min-width="130px">
         <template #default="scope">
           <el-button type="primary" icon="Edit" link @click="openEditDialog(scope.row)"> 编辑</el-button>
           <el-button type="primary" icon="Delete" link @click="deleteUser(scope.row)"> 删除</el-button>
@@ -94,6 +95,7 @@
       v-model:page-size="queryParams.pageSize"
       @pagination="getList"
     />
+    <!--弹出框-->
     <el-dialog v-model="addOrUpdate" :title="dialogTitle" append-to-body width="500px">
       <el-form ref="userFormRef" label-width="100px" :model="userForm" :rules="rules">
         <el-form-item label="用户名" prop="username">
@@ -197,6 +199,9 @@ const data = reactive({
 const { addOrUpdate, dialogTitle, count, queryParams, typeList, userList, userForm, roleIdList, userRoleList } =
   toRefs(data);
 
+/**
+ * 查询按钮
+ */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
@@ -230,6 +235,10 @@ const openEditDialog = (user: User) => {
   userFormRef.value?.clearValidate();
 };
 
+/**
+ * 编辑或新增表单提交
+ * 通过userForm的userId字段是否为空判断为新增或修改
+ */
 const submitForm = () => {
   userFormRef.value?.validate(valid => {
     if (valid) {
@@ -259,6 +268,10 @@ const submitForm = () => {
   });
 };
 
+/**
+ * 删除用户
+ * @param user
+ */
 const deleteUser = (user: User) => {
   messageConfirm("确定要删除用户【" + user.username + "】吗?").then(() => {
     deleteUserById(user.userId).then(({ data }) => {
@@ -297,15 +310,14 @@ const getList = () => {
   });
 };
 
-const getRoleList = () => {
+/**
+ * 初始化获取用户列表及全部角色列表
+ */
+onMounted(() => {
+  getList();
   getUserRoleList().then(({ data }) => {
     userRoleList.value = data.data;
   });
-};
-
-onMounted(() => {
-  getList();
-  getRoleList();
 });
 </script>
 

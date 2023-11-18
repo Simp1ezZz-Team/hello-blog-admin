@@ -20,6 +20,9 @@ export interface Result<T> {
   data: T;
 }
 
+/**
+ * 分页结果
+ */
 export interface PageResult<T> {
   /**
    * 分页结果
