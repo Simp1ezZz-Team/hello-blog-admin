@@ -1,5 +1,8 @@
 import type { PageQuery } from "@/api/model/types";
 
+/**
+ * 用户详情，包括权限信息
+ */
 export interface UserInfo {
   /**
    * 用户id
@@ -23,7 +26,14 @@ export interface UserInfo {
   permissionList: string[];
 }
 
+/**
+ * 用户查询参数
+ */
 export interface UserQuery extends PageQuery {
+  /**
+   * 用户名
+   */
+  username?: string;
   /**
    * 用户昵称
    */
@@ -34,6 +44,20 @@ export interface UserQuery extends PageQuery {
   loginType?: number;
 }
 
+export interface UserStatus {
+  /**
+   * 用户id
+   */
+  id: number;
+  /**
+   * 禁用状态
+   */
+  disableFlag: number;
+}
+
+/**
+ * 角色信息
+ */
 export interface UserRole {
   /**
    * 角色id
@@ -45,11 +69,22 @@ export interface UserRole {
   roleName: string;
 }
 
+/**
+ * 用户信息
+ */
 export interface User {
   /**
    * 用户id
    */
   userId: number;
+  /**
+   * 用户名
+   */
+  username: string;
+  /**
+   * 用户密码
+   */
+  password: string;
   /**
    * 用户昵称
    */
@@ -86,4 +121,34 @@ export interface User {
    * 登录时间
    */
   loginTime: string;
+}
+
+/**
+ * 用户表单
+ */
+export interface UserForm {
+  /**
+   * 用户id
+   */
+  userId: number;
+  /**
+   * 用户名
+   */
+  username: string;
+  /**
+   * 用户密码
+   */
+  password: string;
+  /**
+   * 用户昵称
+   */
+  nickname: string;
+  /**
+   * 用户头像
+   */
+  avatar: string;
+  /**
+   * 用户角色id列表
+   */
+  roleIdList: number[];
 }

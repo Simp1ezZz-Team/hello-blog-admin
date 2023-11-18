@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" :inline="true">
+      <el-form-item label="用户名">
+        <el-input v-model="queryParams.username" placeholder="请输入用户名" style="width: 200px" clearable />
+      </el-form-item>
       <el-form-item label="用户昵称">
         <el-input v-model="queryParams.nickname" placeholder="请输入用户昵称" style="width: 200px" clearable />
       </el-form-item>
@@ -11,32 +14,35 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" icon="Plus" @click="openAddDialog">新增用户</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="userList" border>
-      <el-table-column prop="userId" label="用户id" align="center" />
-      <el-table-column prop="avatar" label="用户头像" align="center">
+      <el-table-column prop="userId" label="用户id" align="center" min-width="30px" />
+      <el-table-column prop="avatar" label="用户头像" align="center" min-width="80px">
         <template #default="scope">
           <el-image :src="scope.row.avatar" style="width: 60px; height: 60px" />
         </template>
       </el-table-column>
-      <el-table-column prop="nickname" label="用户昵称" align="center" />
-      <el-table-column prop="loginType" label="登录方式" align="center">
+      <el-table-column prop="username" label="用户名" align="center" min-width="80px" />
+      <el-table-column prop="nickname" label="用户昵称" align="center" min-width="100px" />
+      <el-table-column prop="loginType" label="登录方式" align="center" min-width="40px">
         <template #default="scope">
-          <el-tag type="success" v-if="scope.row.loginType == 1">邮箱</el-tag>
-          <el-tag v-if="scope.row.loginType == 2">QQ</el-tag>
+          <el-tag type="success" v-if="scope.row.loginType == 0">账号</el-tag>
+          <el-tag v-if="scope.row.loginType == 1">邮箱</el-tag>
+          <el-tag type="info" v-if="scope.row.loginType == 2">QQ</el-tag>
           <el-tag type="danger" v-if="scope.row.loginType == 3">Gitee</el-tag>
-          <el-tag type="info" v-if="scope.row.loginType == 4">Github</el-tag>
+          <el-tag type="warning" v-if="scope.row.loginType == 4">Github</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="roleList" label="用户角色" align="center">
+      <el-table-column prop="roleList" label="用户角色" align="center" min-width="40px">
         <template #default="scope">
           <el-tag v-for="role in scope.row.roleList" :key="role.id" style="margin-right: 4px; margin-top: 4px">
             {{ role.roleName }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" align="center">
+      <el-table-column prop="status" label="状态" align="center" min-width="40px">
         <template #default="scope">
           <el-switch
             v-model="scope.row.disableFlag"
@@ -49,12 +55,12 @@
         </template>
       </el-table-column>
       <!-- 登录ip -->
-      <el-table-column prop="ipAddress" label="登录ip" align="center" />
+      <el-table-column prop="ipAddress" label="登录ip" align="center" min-width="50px" />
       <!-- 登录地址 -->
-      <el-table-column prop="ipSource" label="登录地址" align="center" />
-      <el-table-column prop="createTime" label="创建时间" align="center">
+      <el-table-column prop="ipSource" label="登录地址" align="center" min-width="50px" />
+      <el-table-column prop="createTime" label="创建时间" align="center" min-width="85px">
         <template #default="scope">
-          <div class="create-time">
+          <div class="create-time" v-if="scope.row.createTime">
             <el-icon>
               <Clock />
             </el-icon>
@@ -63,9 +69,9 @@
         </template>
       </el-table-column>
       <!-- 登录时间 -->
-      <el-table-column prop="loginTime" label="登录时间" align="center">
+      <el-table-column prop="loginTime" label="登录时间" align="center" min-width="85px">
         <template #default="scope">
-          <div class="create-time">
+          <div class="create-time" v-if="scope.row.loginTime">
             <el-icon>
               <Clock />
             </el-icon>
@@ -74,35 +80,97 @@
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作" align="center" min-width="60px">
         <template #default="scope">
-          <el-button type="primary" icon="Edit" link @click="openModel(scope.row)"> 编辑</el-button>
+          <el-button type="primary" icon="Edit" link @click="openEditDialog(scope.row)"> 编辑</el-button>
+          <el-button type="primary" icon="Delete" link @click="deleteUser(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <!--分页-->
     <pagination
       :total="count"
       v-model:page-num="queryParams.pageNum"
       v-model:page-size="queryParams.pageSize"
       @pagination="getList"
     />
+    <el-dialog v-model="addOrUpdate" :title="dialogTitle" append-to-body width="500px">
+      <el-form ref="userFormRef" label-width="100px" :model="userForm" :rules="rules">
+        <el-form-item label="用户名" prop="username">
+          <el-input
+            v-model="userForm.username"
+            :disabled="userForm.userId != null"
+            placeholder="请输入用户名"
+            style="width: 250px"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="密码" prop="password" v-if="userForm.userId == null">
+          <el-input
+            type="password"
+            v-model="userForm.password"
+            placeholder="请输入密码"
+            style="width: 250px"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="用户昵称" prop="nickname">
+          <el-input v-model="userForm.nickname" placeholder="请输入用户昵称" style="width: 250px" clearable />
+        </el-form-item>
+        <el-form-item label="角色" prop="roleIdList">
+          <el-checkbox-group v-model="roleIdList" style="width: 250px">
+            <el-checkbox v-for="userRole in userRoleList" :key="userRole.roleId" :label="userRole.roleId">
+              {{ userRole.roleName }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="addOrUpdate = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, toRefs } from "vue";
-import type { User, UserQuery } from "@/api/user/types";
+import { onMounted, reactive, ref, toRefs } from "vue";
+import type { User, UserForm, UserQuery, UserRole } from "@/api/user/types";
 import { Clock } from "@element-plus/icons-vue";
-import { getUserList } from "@/api/user";
+import { addUser, deleteUserById, getUserList, getUserRoleList, updateUser, updateUserStatus } from "@/api/user";
 import Pagination from "@/components/Pagination/index.vue";
+import type { FormInstance, FormRules } from "element-plus";
+import { messageConfirm, notifySuccess } from "@/utils/modal";
+
+const userFormRef = ref<FormInstance>();
+const rules = reactive<FormRules>({
+  nickname: [{ required: true, message: "请输入昵称", trigger: "blur" }],
+  username: [
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    { min: 3, max: 20, message: "用户名长度在 3 到 20 个字符", trigger: "blur" }
+  ],
+  password: [
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { min: 6, message: "密码不能少于6位", trigger: "blur" }
+  ],
+  roleIdList: [{ type: "array", min: 1, message: "请选择角色", trigger: "blur" }]
+});
 
 const data = reactive({
+  addOrUpdate: false,
+  dialogTitle: "",
   count: 0,
   queryParams: {
     pageNum: 1,
     pageSize: 10
   } as UserQuery,
   typeList: [
+    {
+      value: 0,
+      label: "账号"
+    },
     {
       value: 1,
       label: "邮箱"
@@ -120,20 +188,108 @@ const data = reactive({
       label: "Github"
     }
   ],
-  userList: [] as User[]
+  userList: [] as User[],
+  userForm: {} as UserForm,
+  roleIdList: [] as number[],
+  userRoleList: [] as UserRole[]
 });
 
-const { count, queryParams, typeList, userList } = toRefs(data);
+const { addOrUpdate, dialogTitle, count, queryParams, typeList, userList, userForm, roleIdList, userRoleList } =
+  toRefs(data);
 
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
 };
 
-const handleChangeStatus = (user: User) => {};
+/**
+ * 打开新增用户窗口
+ */
+const openAddDialog = () => {
+  addOrUpdate.value = true;
+  userForm.value = {} as UserForm;
+  roleIdList.value = [];
+  dialogTitle.value = "新增用户";
+};
 
-const openModel = (user: User) => {};
+/**
+ * 打开编辑用户窗口
+ * @param user
+ */
+const openEditDialog = (user: User) => {
+  addOrUpdate.value = true;
+  dialogTitle.value = "编辑用户";
+  userForm.value.userId = user.userId;
+  userForm.value.username = user.username;
+  userForm.value.password = user.password;
+  userForm.value.nickname = user.nickname;
+  roleIdList.value = [];
+  user.roleList.forEach(role => {
+    roleIdList.value.push(role.roleId);
+  });
+  userFormRef.value?.clearValidate();
+};
 
+const submitForm = () => {
+  userFormRef.value?.validate(valid => {
+    if (valid) {
+      userForm.value.roleIdList = roleIdList.value;
+      // 更新用户
+      if (userForm.value.userId != null) {
+        updateUser(userForm.value).then(({ data }) => {
+          if (data.flag) {
+            notifySuccess(data.msg);
+            getList();
+            addOrUpdate.value = false;
+          }
+        });
+      } else {
+        // 新增用户
+        addUser(userForm.value).then(({ data }) => {
+          if (data.flag) {
+            notifySuccess(data.msg);
+            getList();
+            addOrUpdate.value = false;
+          }
+        });
+      }
+    } else {
+      return false;
+    }
+  });
+};
+
+const deleteUser = (user: User) => {
+  messageConfirm("确定要删除用户【" + user.username + "】吗?").then(() => {
+    deleteUserById(user.userId).then(({ data }) => {
+      if (data.flag) {
+        notifySuccess(data.msg);
+        getList();
+      }
+    });
+  });
+};
+
+/**
+ * 修改用户状态
+ * @param user
+ */
+const handleChangeStatus = (user: User) => {
+  const text = user.disableFlag === 0 ? "解封" : "封禁";
+  messageConfirm("确定要" + text + user.username + "吗?").then(() => {
+    updateUserStatus({ id: user.userId, disableFlag: user.disableFlag }).then(({ data }) => {
+      if (data.flag) {
+        notifySuccess(data.msg);
+      } else {
+        user.disableFlag = user.disableFlag === 0 ? 1 : 0;
+      }
+    });
+  });
+};
+
+/**
+ * 获取用户列表
+ */
 const getList = () => {
   getUserList(queryParams.value).then(({ data }) => {
     userList.value = data.data.records;
@@ -141,8 +297,15 @@ const getList = () => {
   });
 };
 
+const getRoleList = () => {
+  getUserRoleList().then(({ data }) => {
+    userRoleList.value = data.data;
+  });
+};
+
 onMounted(() => {
   getList();
+  getRoleList();
 });
 </script>
 
