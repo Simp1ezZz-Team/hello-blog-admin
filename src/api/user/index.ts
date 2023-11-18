@@ -95,3 +95,15 @@ export function deleteUserById(id: number): AxiosPromise<Result<null>> {
     method: "delete"
   });
 }
+
+/**
+ * 批量删除用户
+ * @param ids
+ */
+export function deleteUserBatch(ids: number[]): AxiosPromise<Result<null>> {
+  return request({
+    url: `/admin/user/batch`,
+    method: "delete",
+    data: ids
+  });
+}

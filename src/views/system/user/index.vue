@@ -14,10 +14,14 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button type="primary" icon="Plus" @click="openAddDialog">新增用户</el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="userList" border>
+    <div style="padding-bottom: 10px">
+      <el-button type="primary" icon="Plus" @click="openAddDialog">新增</el-button>
+      <el-button type="danger" icon="Delete" @click="batchDelete">批量删除</el-button>
+    </div>
+    <el-table stripe :data="userList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" align="center" width="55" />
       <el-table-column prop="userId" label="用户id" align="center" min-width="80px" />
       <el-table-column prop="avatar" label="用户头像" align="center" min-width="80px">
         <template #default="scope">
@@ -141,10 +145,18 @@
 import { onMounted, reactive, ref, toRefs } from "vue";
 import type { User, UserForm, UserQuery, UserRole } from "@/api/user/types";
 import { Clock } from "@element-plus/icons-vue";
-import { addUser, deleteUserById, getUserList, getUserRoleList, updateUser, updateUserStatus } from "@/api/user";
+import {
+  addUser,
+  deleteUserBatch,
+  deleteUserById,
+  getUserList,
+  getUserRoleList,
+  updateUser,
+  updateUserStatus
+} from "@/api/user";
 import Pagination from "@/components/Pagination/index.vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { messageConfirm, notifySuccess } from "@/utils/modal";
+import { messageConfirm, notifySuccess, notifyWarning } from "@/utils/modal";
 
 const userFormRef = ref<FormInstance>();
 const rules = reactive<FormRules>({
@@ -164,6 +176,7 @@ const data = reactive({
   addOrUpdate: false,
   dialogTitle: "",
   count: 0,
+  multipleSelection: [] as User[],
   queryParams: {
     pageNum: 1,
     pageSize: 10
@@ -196,8 +209,18 @@ const data = reactive({
   userRoleList: [] as UserRole[]
 });
 
-const { addOrUpdate, dialogTitle, count, queryParams, typeList, userList, userForm, roleIdList, userRoleList } =
-  toRefs(data);
+const {
+  addOrUpdate,
+  dialogTitle,
+  count,
+  queryParams,
+  typeList,
+  userList,
+  userForm,
+  roleIdList,
+  userRoleList,
+  multipleSelection
+} = toRefs(data);
 
 /**
  * 查询按钮
@@ -205,6 +228,10 @@ const { addOrUpdate, dialogTitle, count, queryParams, typeList, userList, userFo
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
+};
+
+const handleSelectionChange = (val: User[]) => {
+  multipleSelection.value = val;
 };
 
 /**
@@ -275,6 +302,22 @@ const submitForm = () => {
 const deleteUser = (user: User) => {
   messageConfirm("确定要删除用户【" + user.username + "】吗?").then(() => {
     deleteUserById(user.userId).then(({ data }) => {
+      if (data.flag) {
+        notifySuccess(data.msg);
+        getList();
+      }
+    });
+  });
+};
+
+const batchDelete = () => {
+  if (multipleSelection.value.length === 0) {
+    notifyWarning("请选择要删除的用户");
+    return;
+  }
+  messageConfirm("确定要删除选中的用户吗?").then(() => {
+    const userIds = multipleSelection.value.map(user => user.userId);
+    deleteUserBatch(userIds).then(({ data }) => {
       if (data.flag) {
         notifySuccess(data.msg);
         getList();

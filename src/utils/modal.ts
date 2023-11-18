@@ -8,6 +8,14 @@ export function notifySuccess(message: string) {
   });
 }
 
+export function notifyWarning(message: string) {
+  ElNotification({
+    title: "警告",
+    message,
+    type: "warning"
+  });
+}
+
 export function messageConfirm(content: string) {
   return ElMessageBox.confirm(content, "系统提示", {
     confirmButtonText: "确定",
