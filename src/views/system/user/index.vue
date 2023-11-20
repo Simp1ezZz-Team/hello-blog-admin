@@ -16,21 +16,25 @@
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
       </el-form-item>
     </el-form>
-    <div style="padding-bottom: 10px">
-      <el-button type="primary" icon="Plus" @click="openAddDialog">新增</el-button>
-      <el-button type="danger" icon="Delete" @click="batchDelete">批量删除</el-button>
-    </div>
+    <el-row :gutter="10" style="margin-bottom: 15px">
+      <el-col :span="1.5">
+        <el-button type="primary" icon="Plus" @click="openAddDialog">新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="danger" icon="Delete" @click="batchDelete">批量删除</el-button>
+      </el-col>
+    </el-row>
     <el-table stripe :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center" width="55" />
-      <el-table-column prop="userId" label="用户id" align="center" min-width="80px" />
-      <el-table-column prop="avatar" label="用户头像" align="center" min-width="80px">
+      <el-table-column prop="userId" label="用户id" align="center" width="80" />
+      <el-table-column prop="avatar" label="用户头像" align="center" width="90">
         <template #default="scope">
           <el-image :src="scope.row.avatar" style="width: 60px; height: 60px" />
         </template>
       </el-table-column>
-      <el-table-column prop="username" label="用户名" align="center" min-width="110px" />
-      <el-table-column prop="nickname" label="用户昵称" align="center" min-width="150px" />
-      <el-table-column prop="loginType" label="登录方式" align="center" min-width="100px">
+      <el-table-column prop="username" label="用户名" align="center" />
+      <el-table-column prop="nickname" label="用户昵称" align="center" />
+      <el-table-column prop="loginType" label="登录方式" align="center" width="80">
         <template #default="scope">
           <el-tag type="success" v-if="scope.row.loginType == 0">账号</el-tag>
           <el-tag v-if="scope.row.loginType == 1">邮箱</el-tag>
@@ -39,14 +43,14 @@
           <el-tag type="warning" v-if="scope.row.loginType == 4">Github</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="roleList" label="用户角色" align="center" min-width="100px">
+      <el-table-column prop="roleList" label="用户角色" align="center" width="160">
         <template #default="scope">
           <el-tag v-for="role in scope.row.roleList" :key="role.id" style="margin-right: 4px; margin-top: 4px">
             {{ role.roleName }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" align="center" min-width="60px">
+      <el-table-column prop="status" label="状态" align="center" width="80">
         <template #default="scope">
           <el-switch
             v-model="scope.row.disableFlag"
@@ -59,36 +63,19 @@
         </template>
       </el-table-column>
       <!-- 登录ip -->
-      <el-table-column prop="ipAddress" label="登录ip" align="center" min-width="100px" />
+      <el-table-column prop="ipAddress" label="登录ip" align="center" width="150" />
       <!-- 登录地址 -->
-      <el-table-column prop="ipSource" label="登录地址" align="center" min-width="100px" />
+      <el-table-column prop="ipSource" label="登录地址" align="center" width="150" />
       <!-- 登录时间 -->
-      <el-table-column prop="loginTime" label="登录时间" align="center" min-width="150px">
-        <template #default="scope">
-          <div class="create-time" v-if="scope.row.loginTime">
-            <el-icon>
-              <Clock />
-            </el-icon>
-            <span style="margin-left: 10px">{{ scope.row.loginTime }}</span>
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column prop="loginTime" label="登录时间" align="center" width="180" />
       <!--创建时间-->
-      <el-table-column prop="createTime" label="创建时间" align="center" min-width="150px">
-        <template #default="scope">
-          <div class="create-time" v-if="scope.row.createTime">
-            <el-icon>
-              <Clock />
-            </el-icon>
-            <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column prop="createTime" label="创建时间" align="center" width="180" />
+
       <!-- 操作 -->
-      <el-table-column label="操作" align="center" min-width="130px">
+      <el-table-column label="操作" align="center" width="160">
         <template #default="scope">
           <el-button type="primary" icon="Edit" link @click="openEditDialog(scope.row)"> 编辑</el-button>
-          <el-button type="primary" icon="Delete" link @click="deleteUser(scope.row)"> 删除</el-button>
+          <el-button type="danger" icon="Delete" link @click="deleteUser(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
     </el-table>
