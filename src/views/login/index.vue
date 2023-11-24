@@ -41,7 +41,7 @@ import router from "@/router";
 
 const { userStore } = useStore();
 const loading = ref(false);
-const loginForm = reactive({ username: "", password: "" });
+const loginForm = reactive({ username: "admin", password: "123456" });
 const ruleFormRef = ref<FormInstance>();
 const rules = reactive<FormRules>({
   username: [{ required: true, message: "请输入用户名", trigger: "blur" }],

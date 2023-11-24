@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" :inline="true">
       <el-form-item label="角色名称">
-        <el-input v-model="queryParams.roleName" placeholder="请输入角色名" style="width: 200px" clearable />
+        <el-input v-model="queryParams.roleName" placeholder="请输入角色名称" style="width: 200px" clearable />
       </el-form-item>
       <el-form-item label="角色状态">
         <el-select v-model="queryParams.disableFlag" placeholder="角色状态" style="width: 200px" clearable>
@@ -13,16 +13,20 @@
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
       </el-form-item>
     </el-form>
-    <div style="padding-bottom: 10px">
-      <el-button type="primary" icon="Plus" @click="openAddDialog">新增</el-button>
-      <el-button type="danger" icon="Delete" @click="batchDelete">批量删除</el-button>
-    </div>
+    <el-row :gutter="10" style="margin-bottom: 15px">
+      <el-col :span="1.5">
+        <el-button type="primary" icon="Plus" @click="openAddDialog">新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="danger" icon="Delete" @click="batchDelete">批量删除</el-button>
+      </el-col>
+    </el-row>
     <el-table stripe :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center" width="55" />
-      <el-table-column prop="roleId" label="角色id" align="center" min-width="80px" />
-      <el-table-column prop="roleName" label="角色名称" align="center" min-width="80px" />
-      <el-table-column prop="roleDesc" label="角色描述" align="center" min-width="80px" />
-      <el-table-column prop="status" label="状态" align="center" min-width="60px">
+      <el-table-column prop="roleId" label="角色ID" align="center" width="80" />
+      <el-table-column prop="roleName" label="角色名称" align="center" width="80" />
+      <el-table-column prop="roleDesc" label="角色描述" align="center" />
+      <el-table-column prop="status" label="角色状态" align="center" width="80">
         <template #default="scope">
           <el-switch
             v-model="scope.row.disableFlag"
@@ -35,21 +39,13 @@
         </template>
       </el-table-column>
       <!--创建时间-->
-      <el-table-column prop="createTime" label="创建时间" align="center" min-width="150px">
-        <template #default="scope">
-          <div class="create-time" v-if="scope.row.createTime">
-            <el-icon>
-              <Clock />
-            </el-icon>
-            <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column prop="createTime" label="创建时间" align="center" width="180" />
+
       <!-- 操作 -->
-      <el-table-column label="操作" align="center" min-width="130px">
+      <el-table-column label="操作" align="center" width="160">
         <template #default="scope">
           <el-button type="primary" icon="Edit" link @click="openEditDialog(scope.row)"> 编辑</el-button>
-          <el-button type="primary" icon="Delete" link @click="deleteRole(scope.row)"> 删除</el-button>
+          <el-button type="danger" icon="Delete" link @click="deleteRole(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -63,34 +59,18 @@
     <!--弹出框-->
     <el-dialog v-model="addOrUpdate" :title="dialogTitle" append-to-body width="500px">
       <el-form ref="roleFormRef" label-width="100px" :model="roleForm" :rules="rules">
-        <el-form-item label="用户名" prop="username">
-          <el-input
-            v-model="userForm.username"
-            :disabled="userForm.userId != null"
-            placeholder="请输入用户名"
-            style="width: 250px"
-            clearable
-          />
-        </el-form-item>
-        <el-form-item label="密码" prop="password" v-if="userForm.userId == null">
-          <el-input
-            type="password"
-            v-model="userForm.password"
-            placeholder="请输入密码"
-            style="width: 250px"
-            clearable
-          />
-        </el-form-item>
-        <el-form-item label="用户昵称" prop="nickname">
-          <el-input v-model="userForm.nickname" placeholder="请输入用户昵称" style="width: 250px" clearable />
-        </el-form-item>
-        <el-form-item label="角色" prop="roleIdList">
-          <el-checkbox-group v-model="roleIdList" style="width: 250px">
-            <el-checkbox v-for="userRole in userRoleList" :key="userRole.roleId" :label="userRole.roleId">
-              {{ userRole.roleName }}
-            </el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="角色名称" prop="roleName">
+              <el-input v-model="roleForm.roleName" placeholder="请输入角色名" style="width: 250px" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="角色描述" prop="roleDesc">
+              <el-input v-model="roleForm.roleDesc" placeholder="请输入角色描述" style="width: 250px" clearable />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -104,24 +84,27 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref, toRefs } from "vue";
-import { Clock } from "@element-plus/icons-vue";
 import Pagination from "@/components/Pagination/index.vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { messageConfirm, notifySuccess, notifyWarning } from "@/utils/modal";
-import type { Role, RoleQuery } from "@/api/role/types";
+import type { Role, RoleForm, RoleQuery } from "@/api/role/types";
+import {
+  addRole,
+  deleteRoleBatch,
+  deleteRoleById,
+  getRoleById,
+  getRoleList,
+  updateRole,
+  updateRoleStatus
+} from "@/api/role";
 
 const roleFormRef = ref<FormInstance>();
 const rules = reactive<FormRules>({
-  nickname: [{ required: true, message: "请输入昵称", trigger: "blur" }],
-  username: [
-    { required: true, message: "请输入用户名", trigger: "blur" },
-    { min: 3, max: 20, message: "用户名长度在 3 到 20 个字符", trigger: "blur" }
+  roleName: [
+    { required: true, message: "请输入角色名称", trigger: "blur" },
+    { max: 20, message: "角色名称长度不能超过20个字符", trigger: "blur" }
   ],
-  password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 6, message: "密码不能少于6位", trigger: "blur" }
-  ],
-  roleIdList: [{ type: "array", min: 1, message: "请选择角色", trigger: "blur" }]
+  roleDesc: [{ required: true, message: "请输入角色描述", trigger: "blur" }]
 });
 
 const data = reactive({
@@ -144,10 +127,11 @@ const data = reactive({
     }
   ],
   roleList: [] as Role[],
-  roleForm:
+  roleForm: {} as RoleForm
 });
 
-const { addOrUpdate, dialogTitle, count, queryParams, multipleSelection, statusList, roleList } = toRefs(data);
+const { addOrUpdate, dialogTitle, count, multipleSelection, queryParams, statusList, roleList, roleForm } =
+  toRefs(data);
 
 /**
  * 查询按钮
@@ -157,49 +141,45 @@ const handleQuery = () => {
   getList();
 };
 
-const handleSelectionChange = (val: User[]) => {
+const handleSelectionChange = (val: Role[]) => {
   multipleSelection.value = val;
 };
 
 /**
- * 打开新增用户窗口
+ * 打开新增角色窗口
  */
 const openAddDialog = () => {
   addOrUpdate.value = true;
-  userForm.value = {} as UserForm;
-  roleIdList.value = [];
-  dialogTitle.value = "新增用户";
+  roleForm.value = {} as RoleForm;
+  dialogTitle.value = "新增角色";
 };
 
 /**
- * 打开编辑用户窗口
- * @param user
+ * 打开编辑角色窗口
+ * @param role
  */
-const openEditDialog = (user: User) => {
+const openEditDialog = (role: Role) => {
   addOrUpdate.value = true;
-  dialogTitle.value = "编辑用户";
-  userForm.value.userId = user.userId;
-  userForm.value.username = user.username;
-  userForm.value.password = user.password;
-  userForm.value.nickname = user.nickname;
-  roleIdList.value = [];
-  user.roleList.forEach(role => {
-    roleIdList.value.push(role.roleId);
+  dialogTitle.value = "编辑角色";
+  // 获取最新用户信息
+  getRoleById(role.roleId).then(({ data }) => {
+    roleForm.value.roleId = data.data.roleId;
+    roleForm.value.roleName = data.data.roleName;
+    roleForm.value.roleDesc = data.data.roleDesc;
   });
-  userFormRef.value?.clearValidate();
+  roleFormRef.value?.clearValidate();
 };
 
 /**
  * 编辑或新增表单提交
- * 通过userForm的userId字段是否为空判断为新增或修改
+ * 通过roleForm的roleId字段是否为空判断为新增或修改
  */
 const submitForm = () => {
-  userFormRef.value?.validate(valid => {
+  roleFormRef.value?.validate(valid => {
     if (valid) {
-      userForm.value.roleIdList = roleIdList.value;
       // 更新用户
-      if (userForm.value.userId != null) {
-        updateUser(userForm.value).then(({ data }) => {
+      if (roleForm.value.roleId != undefined) {
+        updateRole(roleForm.value).then(({ data }) => {
           if (data.flag) {
             notifySuccess(data.msg);
             getList();
@@ -208,7 +188,7 @@ const submitForm = () => {
         });
       } else {
         // 新增用户
-        addUser(userForm.value).then(({ data }) => {
+        addRole(roleForm.value).then(({ data }) => {
           if (data.flag) {
             notifySuccess(data.msg);
             getList();
@@ -224,27 +204,11 @@ const submitForm = () => {
 
 /**
  * 删除用户
- * @param user
+ * @param role
  */
-const deleteRole = (user: User) => {
-  messageConfirm("确定要删除用户【" + user.username + "】吗?").then(() => {
-    deleteUserById(user.userId).then(({ data }) => {
-      if (data.flag) {
-        notifySuccess(data.msg);
-        getList();
-      }
-    });
-  });
-};
-
-const batchDelete = () => {
-  if (multipleSelection.value.length === 0) {
-    notifyWarning("请选择要删除的用户");
-    return;
-  }
-  messageConfirm("确定要删除选中的用户吗?").then(() => {
-    const userIds = multipleSelection.value.map(user => user.userId);
-    deleteUserBatch(userIds).then(({ data }) => {
+const deleteRole = (role: Role) => {
+  messageConfirm("确定要删除角色【" + role.roleName + "】吗?").then(() => {
+    deleteRoleById(role.roleId).then(({ data }) => {
       if (data.flag) {
         notifySuccess(data.msg);
         getList();
@@ -254,40 +218,56 @@ const batchDelete = () => {
 };
 
 /**
- * 修改用户状态
- * @param user
+ * 批量删除角色
  */
-const handleChangeStatus = (user: User) => {
-  const text = user.disableFlag === 0 ? "解封" : "封禁";
-  messageConfirm("确定要" + text + user.username + "吗?").then(() => {
-    updateUserStatus({ id: user.userId, disableFlag: user.disableFlag }).then(({ data }) => {
+const batchDelete = () => {
+  if (multipleSelection.value.length === 0) {
+    notifyWarning("请选择要删除的角色");
+    return;
+  }
+  messageConfirm("确定要删除选中的角色吗?").then(() => {
+    const roleIds = multipleSelection.value.map(role => role.roleId);
+    deleteRoleBatch(roleIds).then(({ data }) => {
+      if (data.flag) {
+        notifySuccess(data.msg);
+        getList();
+      }
+    });
+  });
+};
+
+/**
+ * 修改角色状态
+ * @param role
+ */
+const handleChangeStatus = (role: Role) => {
+  const text = role.disableFlag === 0 ? "启用" : "停用";
+  messageConfirm("确定要" + text + role.roleName + "吗?").then(() => {
+    updateRoleStatus({ id: role.roleId, disableFlag: role.disableFlag }).then(({ data }) => {
       if (data.flag) {
         notifySuccess(data.msg);
       } else {
-        user.disableFlag = user.disableFlag === 0 ? 1 : 0;
+        role.disableFlag = role.disableFlag === 0 ? 1 : 0;
       }
     });
   });
 };
 
 /**
- * 获取用户列表
+ * 获取角色列表
  */
 const getList = () => {
-  getUserList(queryParams.value).then(({ data }) => {
-    userList.value = data.data.records;
+  getRoleList(queryParams.value).then(({ data }) => {
+    roleList.value = data.data.records;
     count.value = data.data.total;
   });
 };
 
 /**
- * 初始化获取用户列表及全部角色列表
+ * 初始化获取角色列表
  */
 onMounted(() => {
   getList();
-  getUserRoleList().then(({ data }) => {
-    userRoleList.value = data.data;
-  });
 });
 </script>
 

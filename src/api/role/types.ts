@@ -41,7 +41,7 @@ export interface RoleStatus {
   /**
    * 角色id
    */
-  roleId: number;
+  id: number;
   /**
    * 禁用状态 (0正常 1禁用)
    */
@@ -52,6 +52,20 @@ export interface RoleStatus {
  * 角色表单
  */
 export interface RoleForm {
+  /**
+   * 角色id
+   */
+  roleId: number;
+  /**
+   * 角色名称
+   */
   roleName: string;
+  /**
+   * 角色描述
+   */
   roleDesc: string;
+  /**
+   * 禁用状态 (0正常 1禁用)
+   */
+  disableFlag: number;
 }

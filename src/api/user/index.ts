@@ -102,8 +102,9 @@ export function addUser(data: UserForm): AxiosPromise<Result<null>> {
  */
 export function deleteUserById(id: number): AxiosPromise<Result<null>> {
   return request({
-    url: `/admin/user/${id}`,
-    method: "delete"
+    url: "/admin/user",
+    method: "delete",
+    data: [id]
   });
 }
 
@@ -113,7 +114,7 @@ export function deleteUserById(id: number): AxiosPromise<Result<null>> {
  */
 export function deleteUserBatch(ids: number[]): AxiosPromise<Result<null>> {
   return request({
-    url: `/admin/user/batch`,
+    url: "/admin/user",
     method: "delete",
     data: ids
   });
