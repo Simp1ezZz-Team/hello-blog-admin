@@ -30,7 +30,6 @@ request.interceptors.request.use(
 //响应拦截器
 request.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log(response.data.msg);
     switch (response.data.code) {
       case 400:
         ElNotification({

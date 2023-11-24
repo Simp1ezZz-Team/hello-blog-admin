@@ -15,6 +15,17 @@ export function getUserInfo(): AxiosPromise<Result<UserInfo>> {
 }
 
 /**
+ * 根据用户id获取用户表中信息
+ * @param userId
+ */
+export function getUserById(userId: number): AxiosPromise<Result<User>> {
+  return request({
+    url: `/admin/user/${userId}`,
+    method: "get"
+  });
+}
+
+/**
  * 获取登录的用户拥有的菜单列表
  */
 export function getUserMenu(): AxiosPromise<Result<RouteRecordRaw[]>> {

@@ -4,7 +4,7 @@
       <el-sub-menu v-if="item.children" :index="resolvePath(item.path)">
         <template #title>
           <el-icon size="18">
-            <svg-icon class="icon" :name="item.meta.icon ? item.meta.icon : 'hello'" />
+            <svg-icon class="icon" :name="item.meta.icon ? item.meta.icon : 'hello'" size="10rem" />
           </el-icon>
           <span>{{ item.meta.title }}</span>
         </template>
@@ -18,7 +18,7 @@
 
       <el-menu-item v-else :index="resolvePath(item.path)">
         <el-icon size="18">
-          <svg-icon class="icon" :name="item.meta.icon ? item.meta.icon : 'hello'" />
+          <svg-icon class="icon" :name="item.meta.icon ? item.meta.icon : 'hello'" size="10rem" />
         </el-icon>
         <span>{{ item.meta.title }}</span>
       </el-menu-item>

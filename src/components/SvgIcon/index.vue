@@ -21,7 +21,7 @@ const props = defineProps({
   },
   size: {
     type: String,
-    default: "10rem"
+    default: "1rem"
   }
 });
 const symbolId = computed(() => `#${props.prefix}-${props.name}`);

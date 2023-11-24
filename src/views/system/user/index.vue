@@ -131,11 +131,11 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, toRefs } from "vue";
 import type { User, UserForm, UserQuery, UserRole } from "@/api/user/types";
-import { Clock } from "@element-plus/icons-vue";
 import {
   addUser,
   deleteUserBatch,
   deleteUserById,
+  getUserById,
   getUserList,
   getUserRoleList,
   updateUser,
@@ -238,13 +238,16 @@ const openAddDialog = () => {
 const openEditDialog = (user: User) => {
   addOrUpdate.value = true;
   dialogTitle.value = "编辑用户";
-  userForm.value.userId = user.userId;
-  userForm.value.username = user.username;
-  userForm.value.password = user.password;
-  userForm.value.nickname = user.nickname;
-  roleIdList.value = [];
-  user.roleList.forEach(role => {
-    roleIdList.value.push(role.roleId);
+  // 获取最新用户信息
+  getUserById(user.userId).then(({ data }) => {
+    userForm.value.userId = data.data.userId;
+    userForm.value.username = data.data.username;
+    userForm.value.password = data.data.password;
+    userForm.value.nickname = data.data.nickname;
+    roleIdList.value = [];
+    data.data.roleList.forEach(role => {
+      roleIdList.value.push(role.roleId);
+    });
   });
   userFormRef.value?.clearValidate();
 };

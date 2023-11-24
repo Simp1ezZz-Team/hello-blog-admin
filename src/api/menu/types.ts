@@ -71,3 +71,68 @@ export interface Menu {
    */
   children: Menu[];
 }
+
+export interface MenuForm {
+  /**
+   * 菜单id
+   */
+  menuId?: number;
+  /**
+   * 父菜单id
+   */
+  parentId: number;
+  /**
+   * 菜单名称
+   */
+  menuName: string;
+  /**
+   * 菜单类型 (D:目录 M:菜单 B:按钮)
+   */
+  menuType: string;
+  /**
+   * 路由地址
+   */
+  path: string;
+  /**
+   * 图标
+   */
+  icon: string;
+  /**
+   * 组件地址
+   */
+  component: string;
+  /**
+   * 权限字符串
+   */
+  perms: string;
+  /**
+   * 是否隐藏 (0否 1是)
+   */
+  hiddenFlag: number;
+  /**
+   * 是否禁用 (0否 1是)
+   */
+  disableFlag: number;
+  /**
+   * 排序
+   */
+  orderNum: number;
+}
+
+/**
+ * 菜单选项树
+ */
+export interface MenuOption {
+  /**
+   * 菜单id
+   */
+  value: number;
+  /**
+   * 菜单名称
+   */
+  label: string;
+  /**
+   * 子菜单
+   */
+  children?: MenuOption[];
+}
