@@ -23,10 +23,10 @@
     </el-row>
     <el-table stripe :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center" width="55" />
-      <el-table-column prop="roleId" label="角色ID" align="center" width="80" />
-      <el-table-column prop="roleName" label="角色名称" align="center" width="80" />
-      <el-table-column prop="roleDesc" label="角色描述" align="center" />
-      <el-table-column prop="status" label="角色状态" align="center" width="80">
+      <el-table-column prop="roleId" label="角色ID" align="center" min-width="80" />
+      <el-table-column prop="roleName" label="角色名称" align="center" min-width="80" />
+      <el-table-column prop="roleDesc" label="角色描述" align="center" mmin-width="160" />
+      <el-table-column prop="status" label="角色状态" align="center" min-width="80">
         <template #default="scope">
           <el-switch
             v-model="scope.row.disableFlag"
@@ -39,10 +39,10 @@
         </template>
       </el-table-column>
       <!--创建时间-->
-      <el-table-column prop="createTime" label="创建时间" align="center" width="180" />
+      <el-table-column prop="createTime" label="创建时间" align="center" min-width="180" />
 
       <!-- 操作 -->
-      <el-table-column label="操作" align="center" width="160">
+      <el-table-column label="操作" align="center" min-width="160">
         <template #default="scope">
           <el-button type="primary" icon="Edit" link @click="openEditDialog(scope.row)"> 编辑</el-button>
           <el-button type="danger" icon="Delete" link @click="deleteRole(scope.row)"> 删除</el-button>
@@ -59,18 +59,41 @@
     <!--弹出框-->
     <el-dialog v-model="addOrUpdate" :title="dialogTitle" append-to-body width="500px">
       <el-form ref="roleFormRef" label-width="100px" :model="roleForm" :rules="rules">
-        <el-row :gutter="24">
-          <el-col :span="12">
-            <el-form-item label="角色名称" prop="roleName">
-              <el-input v-model="roleForm.roleName" placeholder="请输入角色名" style="width: 250px" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="角色描述" prop="roleDesc">
-              <el-input v-model="roleForm.roleDesc" placeholder="请输入角色描述" style="width: 250px" clearable />
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="roleForm.roleName" placeholder="请输入角色名" style="width: 250px" clearable />
+        </el-form-item>
+        <el-form-item label="角色状态" prop="disableFlag">
+          <el-radio-group v-model="roleForm.disableFlag">
+            <el-radio v-for="disableFlag in disableFlags" :key="disableFlag.value" :label="disableFlag.value">
+              {{ disableFlag.label }}
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="菜单权限">
+          <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand">展开/折叠</el-checkbox>
+          <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll">全选/全不选</el-checkbox>
+          <el-checkbox v-model="menuCheckStrictly">父子联动</el-checkbox>
+          <el-tree
+            class="tree-border"
+            :data="treeData"
+            show-checkbox
+            ref="treeRef"
+            node-key="menuId"
+            :default-expand-all="false"
+            :check-strictly="!menuCheckStrictly"
+            empty-text="加载中，请稍候"
+            :props="defaultProps"
+          />
+        </el-form-item>
+        <el-form-item label="角色描述" prop="roleDesc">
+          <el-input
+            v-model="roleForm.roleDesc"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            resize="none"
+            type="textarea"
+            placeholder="请输入内容"
+          />
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -94,21 +117,29 @@ import {
   deleteRoleById,
   getRoleById,
   getRoleList,
+  getRoleMenuIdList,
   updateRole,
   updateRoleStatus
 } from "@/api/role";
+import type { MenuTree } from "@/api/menu/types";
+import { ElTree } from "element-plus";
+import { getMenuTree } from "@/api/menu";
 
 const roleFormRef = ref<FormInstance>();
+const treeRef = ref<InstanceType<typeof ElTree>>();
 const rules = reactive<FormRules>({
-  roleName: [
-    { required: true, message: "请输入角色名称", trigger: "blur" },
-    { max: 20, message: "角色名称长度不能超过20个字符", trigger: "blur" }
-  ],
-  roleDesc: [{ required: true, message: "请输入角色描述", trigger: "blur" }]
+  roleName: [{ required: true, message: "请输入角色名称", trigger: "blur" }]
 });
+const defaultProps = {
+  children: "children",
+  label: "menuName"
+};
 
 const data = reactive({
   addOrUpdate: false,
+  menuExpand: false,
+  menuNodeAll: false,
+  menuCheckStrictly: false,
   dialogTitle: "",
   count: 0,
   multipleSelection: [] as Role[],
@@ -126,12 +157,36 @@ const data = reactive({
       value: 1
     }
   ],
+  disableFlags: [
+    {
+      label: "正常",
+      value: 0
+    },
+    {
+      label: "禁用",
+      value: 1
+    }
+  ],
   roleList: [] as Role[],
-  roleForm: {} as RoleForm
+  roleForm: {} as RoleForm,
+  treeData: [] as MenuTree[]
 });
 
-const { addOrUpdate, dialogTitle, count, multipleSelection, queryParams, statusList, roleList, roleForm } =
-  toRefs(data);
+const {
+  addOrUpdate,
+  menuExpand,
+  menuNodeAll,
+  menuCheckStrictly,
+  dialogTitle,
+  count,
+  multipleSelection,
+  queryParams,
+  statusList,
+  disableFlags,
+  roleList,
+  roleForm,
+  treeData
+} = toRefs(data);
 
 /**
  * 查询按钮
@@ -141,6 +196,10 @@ const handleQuery = () => {
   getList();
 };
 
+/**
+ * 多选绑定值
+ * @param val
+ */
 const handleSelectionChange = (val: Role[]) => {
   multipleSelection.value = val;
 };
@@ -149,6 +208,7 @@ const handleSelectionChange = (val: Role[]) => {
  * 打开新增角色窗口
  */
 const openAddDialog = () => {
+  reset();
   addOrUpdate.value = true;
   roleForm.value = {} as RoleForm;
   dialogTitle.value = "新增角色";
@@ -161,11 +221,17 @@ const openAddDialog = () => {
 const openEditDialog = (role: Role) => {
   addOrUpdate.value = true;
   dialogTitle.value = "编辑角色";
+  reset();
   // 获取最新用户信息
   getRoleById(role.roleId).then(({ data }) => {
     roleForm.value.roleId = data.data.roleId;
     roleForm.value.roleName = data.data.roleName;
     roleForm.value.roleDesc = data.data.roleDesc;
+    roleForm.value.disableFlag = data.data.disableFlag;
+  });
+  // 获取角色菜单权限
+  getRoleMenuIdList(role.roleId).then(({ data }) => {
+    treeRef.value!.setCheckedKeys(data.data);
   });
   roleFormRef.value?.clearValidate();
 };
@@ -177,6 +243,7 @@ const openEditDialog = (role: Role) => {
 const submitForm = () => {
   roleFormRef.value?.validate(valid => {
     if (valid) {
+      roleForm.value.menuIdList = getMenuAllCheckedKeys();
       // 更新用户
       if (roleForm.value.roleId != undefined) {
         updateRole(roleForm.value).then(({ data }) => {
@@ -254,6 +321,48 @@ const handleChangeStatus = (role: Role) => {
 };
 
 /**
+ * 展开折叠菜单权限
+ */
+const handleCheckedTreeExpand = () => {
+  const nodesMap = treeRef.value!.store.nodesMap;
+  for (const j in nodesMap) {
+    nodesMap[j].expanded = menuExpand.value;
+  }
+};
+
+/**
+ * 菜单权限全选/取消
+ */
+const handleCheckedTreeNodeAll = () => {
+  treeRef.value!.setCheckedNodes(menuNodeAll.value ? (treeData.value as Node[]) : []);
+};
+
+/**
+ * 获取所有选择的菜单权限
+ */
+const getMenuAllCheckedKeys = () => {
+  // 目前被选中的菜单节点
+  const checkedKeys = treeRef.value!.getCheckedKeys();
+  // 半选中的菜单节点
+  const halfCheckedKeys = treeRef.value!.getHalfCheckedKeys();
+  checkedKeys.unshift(...halfCheckedKeys);
+  return checkedKeys;
+};
+
+/**
+ * 重置表单
+ */
+const reset = () => {
+  if (treeRef.value !== undefined) {
+    treeRef.value.setCheckedKeys([]);
+  }
+  menuExpand.value = false;
+  menuNodeAll.value = false;
+  menuCheckStrictly.value = false;
+  roleFormRef.value?.clearValidate();
+};
+
+/**
  * 获取角色列表
  */
 const getList = () => {
@@ -268,6 +377,9 @@ const getList = () => {
  */
 onMounted(() => {
   getList();
+  getMenuTree().then(({ data }) => {
+    treeData.value = data.data;
+  });
 });
 </script>
 

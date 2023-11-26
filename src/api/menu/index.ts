@@ -1,4 +1,4 @@
-import type { Menu, MenuForm, MenuOption, MenuQuery } from "@/api/menu/types";
+import type { Menu, MenuForm, MenuOption, MenuQuery, MenuTree } from "@/api/menu/types";
 import request from "@/utils/request";
 import type { AxiosPromise } from "axios";
 import type { Result } from "@/api/model/types";
@@ -21,6 +21,16 @@ export function getMenuList(params: MenuQuery): AxiosPromise<Result<Menu[]>> {
 export function getMenuOptions(): AxiosPromise<Result<MenuOption[]>> {
   return request({
     url: "/admin/menu/list/options",
+    method: "get"
+  });
+}
+
+/**
+ * 获取菜单下拉树
+ */
+export function getMenuTree(): AxiosPromise<Result<MenuTree[]>> {
+  return request({
+    url: "/admin/menu/tree",
     method: "get"
   });
 }

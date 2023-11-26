@@ -136,3 +136,21 @@ export interface MenuOption {
    */
   children?: MenuOption[];
 }
+
+/**
+ * 菜单下拉树
+ */
+export interface MenuTree {
+  /**
+   * 菜单id
+   */
+  menuId: number;
+  /**
+   * 菜单名称
+   */
+  menuName: string;
+  /**
+   * 子菜单
+   */
+  children?: MenuTree[];
+}

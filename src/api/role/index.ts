@@ -27,6 +27,17 @@ export function getRoleById(roleId: number): AxiosPromise<Result<Role>> {
 }
 
 /**
+ * 获取用户菜单id列表
+ * @param roleId
+ */
+export function getRoleMenuIdList(roleId: number): AxiosPromise<Result<number[]>> {
+  return request({
+    url: `/admin/role/menu/${roleId}`,
+    method: "get"
+  });
+}
+
+/**
  * 根据id删除角色
  * @param roleId
  */

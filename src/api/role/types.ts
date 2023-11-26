@@ -1,4 +1,5 @@
 import type { PageQuery } from "@/api/model/types";
+import type { TreeKey } from "element-plus/es/components/tree/src/tree.type";
 
 /**
  * 角色查询类型
@@ -68,4 +69,8 @@ export interface RoleForm {
    * 禁用状态 (0正常 1禁用)
    */
   disableFlag: number;
+  /**
+   * 菜单id列表
+   */
+  menuIdList: TreeKey[];
 }
